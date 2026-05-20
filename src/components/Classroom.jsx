@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button, Container, Form, Row } from "react-bootstrap";
+import Student from "./Student.jsx";
 
 const Classroom = () => {
-    const [stu, setStu] = useState([]);
+    const [stus, setStus] = useState([]);
 
     useEffect(() => {
         fetch("https://cs571.org/rest/s25/hw4/students", {
@@ -12,7 +13,7 @@ const Classroom = () => {
         })
             .then((req) => req.json())
             .then((data) => {
-                setStu(data);
+                setStus(data);
                 console.log(data);
             });
     }, []);
@@ -32,10 +33,14 @@ const Classroom = () => {
                 <br />
                 <Button variant="neutral">Reset Search</Button>
             </Form>
+            <p>There are {stus.length} student(s) matching your research</p>
             <Container fluid>
-                <Row>{/* TODO Students go here! */}</Row>
+                <Row>
+                    {stus.map((stu) => (
+                        <Student key={stu.id} {...stu} />
+                    ))}
+                </Row>
             </Container>
-            <p>There are {stu.length} student(s) matching your research</p>
         </div>
     );
 };
