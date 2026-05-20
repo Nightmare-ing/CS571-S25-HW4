@@ -35,6 +35,7 @@ const Classroom = () => {
             <Container fluid>
                 <Row>{/* TODO Students go here! */}</Row>
             </Container>
+            <p>There are {stu.length} student(s) matching your research</p>
         </div>
     );
 };
