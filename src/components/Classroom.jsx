@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Form, Row, Col } from "react-bootstrap";
+import { Button, Container, Form, Row, Col, Pagination } from "react-bootstrap";
 import Student from "./Student.jsx";
 
 const Classroom = () => {
@@ -7,6 +7,7 @@ const Classroom = () => {
     const [searchName, setSearchName] = useState("");
     const [searchMajor, setSearchMajor] = useState("");
     const [searchInrst, setSearchInrst] = useState("");
+    const [page, setPage] = useState(1);
 
     const searchedStus = filterWith(searchName, searchMajor, searchInrst);
 
@@ -21,6 +22,10 @@ const Classroom = () => {
                 setStus(data);
             });
     }, []);
+
+    useEffect(() => {
+        setPage(1);
+    }, [searchName, searchMajor, searchInrst]);
 
     function filterWith(name, major, inrst) {
         let filteredData = stus;
@@ -101,13 +106,38 @@ const Classroom = () => {
             </p>
             <Container fluid>
                 <Row>
-                    {searchedStus.map((stu) => (
-                        <Col key={stu.id} xs={12} sm={12} md={6} lg={4} xl={3}>
-                            <Student {...stu} />
-                        </Col>
-                    ))}
+                    {searchedStus
+                        .slice((page - 1) * 24, page * 24)
+                        .map((stu) => (
+                            <Col
+                                key={stu.id}
+                                xs={12}
+                                sm={12}
+                                md={6}
+                                lg={4}
+                                xl={3}
+                            >
+                                <Student {...stu} />
+                            </Col>
+                        ))}
                 </Row>
             </Container>
+            <Pagination>
+                {Array.from(
+                    { length: Math.ceil(searchedStus.length / 24) },
+                    (_, i) => i + 1,
+                ).map((i) => (
+                    <Pagination.Item
+                        active={i === page}
+                        onClick={() => {
+                            setPage(i);
+                        }}
+                        key={i}
+                    >
+                        {i}
+                    </Pagination.Item>
+                ))}
+            </Pagination>
         </div>
     );
 };
