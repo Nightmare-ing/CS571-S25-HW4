@@ -4,10 +4,11 @@ import Student from "./Student.jsx";
 
 const Classroom = () => {
     const [stus, setStus] = useState([]);
-    const [searchedStus, setSearchedStus] = useState([]);
     const [searchName, setSearchName] = useState("");
     const [searchMajor, setSearchMajor] = useState("");
     const [searchInrst, setSearchInrst] = useState("");
+
+    const searchedStus = filterWith(searchName, searchMajor, searchInrst);
 
     useEffect(() => {
         fetch("https://cs571.org/rest/s25/hw4/students", {
@@ -18,8 +19,6 @@ const Classroom = () => {
             .then((req) => req.json())
             .then((data) => {
                 setStus(data);
-                setSearchedStus(data);
-                console.log(data);
             });
     }, []);
 
@@ -48,7 +47,7 @@ const Classroom = () => {
             );
         }
 
-        setSearchedStus(filteredData);
+        return filteredData;
     }
 
     return (
@@ -64,7 +63,6 @@ const Classroom = () => {
                     onChange={(e) => {
                         const value = e.target.value;
                         setSearchName(value);
-                        filterWith(value, searchMajor, searchInrst);
                     }}
                 />
                 <Form.Label htmlFor="searchMajor">Major</Form.Label>
@@ -74,7 +72,6 @@ const Classroom = () => {
                     onChange={(e) => {
                         const value = e.target.value;
                         setSearchMajor(value);
-                        filterWith(searchName, value, searchInrst);
                     }}
                 />
                 <Form.Label htmlFor="searchInterest">Interest</Form.Label>
@@ -84,11 +81,19 @@ const Classroom = () => {
                     onChange={(e) => {
                         const value = e.target.value;
                         setSearchInrst(value);
-                        filterWith(searchName, searchMajor, value);
                     }}
                 />
                 <br />
-                <Button variant="neutral">Reset Search</Button>
+                <Button
+                    variant="neutral"
+                    onClick={() => {
+                        setSearchName("");
+                        setSearchMajor("");
+                        setSearchInrst("");
+                    }}
+                >
+                    Reset Search
+                </Button>
             </Form>
             <p>
                 There are {searchedStus.length} student(s) matching your
