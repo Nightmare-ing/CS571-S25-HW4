@@ -4,12 +4,14 @@ import Student from "./Student.jsx";
 
 const Classroom = () => {
     const [stus, setStus] = useState([]);
-    const [searchName, setSearchName] = useState("");
-    const [searchMajor, setSearchMajor] = useState("");
-    const [searchInrst, setSearchInrst] = useState("");
+    const [filters, setFilters] = useState({
+        searchName: "",
+        searchMajor: "",
+        searchInrst: "",
+    });
     const [page, setPage] = useState(1);
 
-    const searchedStus = filterWith(searchName, searchMajor, searchInrst);
+    const searchedStus = filterWith(filters);
 
     useEffect(() => {
         fetch("https://cs571.org/rest/s25/hw4/students", {
@@ -23,36 +25,41 @@ const Classroom = () => {
             });
     }, []);
 
-    useEffect(() => {
-        setPage(1);
-    }, [searchName, searchMajor, searchInrst]);
-
-    function filterWith(name, major, inrst) {
+    function filterWith(filters) {
         let filteredData = stus;
-        if (name) {
+        if (filters.searchName) {
             filteredData = filteredData.filter((stu) =>
                 `${stu.name.first.toLowerCase()} ${stu.name.last.toLowerCase()}`.includes(
-                    name.toLowerCase(),
+                    filters.searchName.toLowerCase(),
                 ),
             );
         }
 
-        if (major) {
+        if (filters.searchMajor) {
             filteredData = filteredData.filter((stu) =>
-                stu.major.toLowerCase().includes(major.toLowerCase()),
+                stu.major
+                    .toLowerCase()
+                    .includes(filters.searchMajor.toLowerCase()),
             );
         }
 
-        if (inrst) {
+        if (filters.searchInrst) {
             filteredData = filteredData.filter(
                 (stu) =>
                     stu.interests.filter((interest) =>
-                        interest.toLowerCase().includes(inrst.toLowerCase()),
+                        interest
+                            .toLowerCase()
+                            .includes(filters.searchInrst.toLowerCase()),
                     ).length,
             );
         }
 
         return filteredData;
+    }
+
+    function updateSearch(key, value) {
+        setFilters((prev) => ({ ...prev, [key]: value }));
+        setPage(1);
     }
 
     return (
@@ -64,37 +71,36 @@ const Classroom = () => {
                 <Form.Label htmlFor="searchName">Name</Form.Label>
                 <Form.Control
                     id="searchName"
-                    value={searchName}
+                    value={filters.searchName}
                     onChange={(e) => {
-                        const value = e.target.value;
-                        setSearchName(value);
+                        updateSearch("searchName", e.target.value);
                     }}
                 />
                 <Form.Label htmlFor="searchMajor">Major</Form.Label>
                 <Form.Control
                     id="searchMajor"
-                    value={searchMajor}
+                    value={filters.searchMajor}
                     onChange={(e) => {
-                        const value = e.target.value;
-                        setSearchMajor(value);
+                        updateSearch("searchMajor", e.target.value);
                     }}
                 />
                 <Form.Label htmlFor="searchInterest">Interest</Form.Label>
                 <Form.Control
                     id="searchInterest"
-                    value={searchInrst}
+                    value={filters.searchInrst}
                     onChange={(e) => {
-                        const value = e.target.value;
-                        setSearchInrst(value);
+                        updateSearch("searchInrst", e.target.value);
                     }}
                 />
                 <br />
                 <Button
                     variant="neutral"
                     onClick={() => {
-                        setSearchName("");
-                        setSearchMajor("");
-                        setSearchInrst("");
+                        setFilters({
+                            searchName: "",
+                            searchMajor: "",
+                            searchInrst: "",
+                        });
                     }}
                 >
                     Reset Search
