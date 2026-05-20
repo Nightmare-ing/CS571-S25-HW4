@@ -12,6 +12,7 @@ const Classroom = () => {
     const [page, setPage] = useState(1);
 
     const searchedStus = filterWith(filters);
+    const maxPages = Math.ceil(searchedStus.length / 24);
 
     useEffect(() => {
         fetch("https://cs571.org/rest/s25/hw4/students", {
@@ -129,10 +130,18 @@ const Classroom = () => {
                 </Row>
             </Container>
             <Pagination>
-                {Array.from(
-                    { length: Math.ceil(searchedStus.length / 24) },
-                    (_, i) => i + 1,
-                ).map((i) => (
+                <Pagination.Item
+                    disabled={page === 1}
+                    key={-1}
+                    onClick={() => {
+                        if (page > 1) {
+                            setPage(page - 1);
+                        }
+                    }}
+                >
+                    Previous
+                </Pagination.Item>
+                {Array.from({ length: maxPages }, (_, i) => i + 1).map((i) => (
                     <Pagination.Item
                         active={i === page}
                         onClick={() => {
@@ -143,6 +152,17 @@ const Classroom = () => {
                         {i}
                     </Pagination.Item>
                 ))}
+                <Pagination.Item
+                    disabled={page === maxPages}
+                    key={-2}
+                    onClick={() => {
+                        if (page < maxPages) {
+                            setPage(page + 1);
+                        }
+                    }}
+                >
+                    Next
+                </Pagination.Item>
             </Pagination>
         </div>
     );
