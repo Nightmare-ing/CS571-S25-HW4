@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Container, Form, Row } from "react-bootstrap";
+import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import Student from "./Student.jsx";
 
 const Classroom = () => {
@@ -37,7 +37,9 @@ const Classroom = () => {
             <Container fluid>
                 <Row>
                     {stus.map((stu) => (
-                        <Student key={stu.id} {...stu} />
+                        <Col key={stu.id} xs={12} sm={12} md={6} lg={4} xl={3}>
+                            <Student {...stu} />
+                        </Col>
                     ))}
                 </Row>
             </Container>
